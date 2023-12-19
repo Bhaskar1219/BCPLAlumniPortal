@@ -1,0 +1,41 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Register</title>
+</head>
+<body>
+    <h3>Register</h3>
+
+    <form asp-controller="Account" asp-action="Register" method="post">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <label>Email</label>
+        <input type="text" name="email" />
+        <label>Password</label>
+        <input type="password" name="password" />
+        <input type="submit" value="Submit" />
+
+
+
+        @* <div>
+        @Html.PasswordFor(model => model.password, new { @class = "form-control", placeholder = "Password", style = "width:100%", required = "required" })
+        @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+        </div>
+        <div style="margin-top:5px;margin-bottom:5px">
+        <button id="login_btn" class="btn btn-sm btn-primary" type="submit" style="width:30%">
+        Log In
+        </button>
+        </div> *@
+
+
+    </form>
+</body>
+</html>
