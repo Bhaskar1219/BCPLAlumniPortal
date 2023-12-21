@@ -17,6 +17,5 @@ namespace BCPLAlumniPortal.DBContext
         }
         public DbSet<User> User { get; set; }
         public DbSet<UserMedicalClaim> UserMedicalClaim { get; set; }
-        public DbSet<BCPLAlumniPortal.Models.ViewModels.MedicalClaimViewModel> MedicalClaimViewModel { get; set; } = default!;
     }
 }

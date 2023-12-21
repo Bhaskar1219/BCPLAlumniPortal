@@ -11,5 +11,6 @@
         public string gender { set; get; }
         public bool isEmpanelled { set;get; }
         public int claimAmount { set;get; }
+        public ICollection<UserMedicalClaimAttachment> attachments { set; get; }
     }
 }

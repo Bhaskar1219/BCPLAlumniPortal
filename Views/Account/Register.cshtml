@@ -9,60 +9,73 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Register</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/account.css" rel="stylesheet" />
 </head>
-<body>
-    <h3>Register</h3>
+<body class="login">
+    <div class="login_wrapper">
+        <h3>New User ? Register with us</h3>
+        <div class="row mt-5">
+            <form asp-controller="Account" asp-action="Register" method="post">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-2 pt-0">Employee Number</legend>
+                    <div class="col-4">
+                        @Html.TextBoxFor(model => model.EmployeeNumber, "", new { @class = "form-control", placeholder = "Employee Number", style = "", required = "required" })
+                        @Html.ValidationMessageFor(model => model.EmployeeNumber, "", new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-2 pt-0">Name</legend>
+                    <div class="col-4 border">
+                        @Html.TextBoxFor(model => model.Name, "", new { @class = "form-control", placeholder = "Name", style = "width:100%", required = "required" })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-2 pt-0">Email</legend>
+                    <div class="col-4">
+                        @Html.TextBoxFor(model => model.Email, "", new { @class = "form-control", placeholder = "Email", style = "", required = "required" })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-2 pt-0">Mobile Number</legend>
+                    <div class="col-4">
+                        @Html.TextBoxFor(model => model.MobileNumber, "", new { @class = "form-control", placeholder = "Mobile Number", style = "", required = "required" })
+                        @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-2 pt-0">Password</legend>
+                    <div class="col-4">
+                        @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password", style = "", required = "required" })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+                <fieldset class="row mb-3">
+                    <legend class="col-form-label col-2 pt-0">Address</legend>
+                    <div class="col-4">
+                        @Html.TextAreaFor(model => model.Address, new { @class = "form-control", placeholder = "Address", style = "", @rows = 7, required = "required" })
+                        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+
+                <fieldset class="row mb-3">
+                    <div class="offset-2">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </fieldset>
 
 
-
-    <form asp-controller="Account" asp-action="Register" method="post">
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div>
-            @Html.TextBoxFor(model => model.Name, "", new { @class = "form-control", placeholder = "Name", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </form>
         </div>
-        <div>
-            @Html.TextBoxFor(model => model.EmployeeNumber, "", new { @class = "form-control", placeholder = "Employee Number", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.EmployeeNumber, "", new { @class = "text-danger" })
-        </div>
-        <div>
-            @Html.TextBoxFor(model => model.Email, "", new { @class = "form-control", placeholder = "Email", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-        </div>
-        <div>
-            @Html.TextBoxFor(model => model.MobileNumber, "", new { @class = "form-control", placeholder = "Mobile Number", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
-        </div>
-        <div>
-            @Html.TextBoxFor(model => model.DateOfBirth, "", new { @class = "form-control", placeholder = "Date Of Birth", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
-        </div>
-        <div>
-            @Html.TextBoxFor(model => model.Address, "", new { @class = "form-control", placeholder = "Address", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
-        </div>
-        <div>
-            @Html.TextBoxFor(model => model.Password, "", new { @class = "form-control", placeholder = "Password", style = "", required = "required" })
-            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-        </div>
+    </div>
+   
 
-        <input type="submit" value="Submit" />
-
-
-
-        @* <div>
-        @Html.PasswordFor(model => model.password, new { @class = "form-control", placeholder = "Password", style = "width:100%", required = "required" })
-        @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
-        </div>
-        <div style="margin-top:5px;margin-bottom:5px">
-        <button id="login_btn" class="btn btn-sm btn-primary" type="submit" style="width:30%">
-        Log In
-        </button>
-        </div> *@
-
-
-    </form>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

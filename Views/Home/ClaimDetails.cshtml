@@ -1,0 +1,49 @@
+﻿@model BCPLAlumniPortal.Models.UserMedicalClaim
+@{
+    ViewData["Title"] = "ClaimDetails";
+}
+
+<h2>Claim Details</h2>
+
+<div cite="row mt-5 mb-5">
+    <div class="row align-items-start">
+        <div class="col-2 bg-light p-2 border align-self-stretch">
+            Claim Number
+        </div>
+        <div class="col-2 border p-2 align-self-stretch">
+            @Html.DisplayFor(model => model.id)
+        </div>
+        <div class="col-2 bg-light p-2 border align-self-stretch">
+            Patient Name
+        </div>
+        <div class="col-2 border p-2 align-self-stretch">
+            @Html.DisplayFor(model => model.patientName)
+        </div>
+    </div>
+    <div class="row align-items-start">
+        <div class="col-2 bg-light p-2 border align-self-stretch">
+            Claim Amount
+        </div>
+        <div class="col-2 border p-2 align-self-stretch">
+            @Html.DisplayFor(model => model.claimAmount)
+        </div>
+    </div>
+</div>
+<div class="row">
+    @if (Model.attachments.Any())
+    {
+        <div class="row align-items-start">
+            <div class="col">
+                <h4>Attachments</h4>
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="hstack gap-3">
+                @foreach (var x in Model.attachments)
+                {
+                    <a href="@Url.Action("ViewAttachment", "Home", new { id = x.id })" target="_blank">Click to View @x.FileName</a>
+                }
+            </div>
+        </div>
+    }
+</div>

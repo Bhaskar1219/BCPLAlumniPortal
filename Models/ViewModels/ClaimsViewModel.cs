@@ -9,5 +9,6 @@
         public string gender { set; get; }
         public bool isEmpanelled { set; get; }
         public int claimAmount { set; get; }
+        public IList<IFormFile> File { set; get; }
     }
 }
