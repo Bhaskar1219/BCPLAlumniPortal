@@ -1,8 +1,13 @@
 ﻿using BCPLAlumniPortal.DBContext;
 using BCPLAlumniPortal.Models;
+using BCPLAlumniPortal.Models.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BCPLAlumniPortal.Controllers
 {
@@ -10,33 +15,20 @@ namespace BCPLAlumniPortal.Controllers
     public class AccountController : Controller
     {
         private DataBaseContext db;
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
 
-        public AccountController(DataBaseContext _db, UserManager<User> _userManager, SignInManager<User> _signInManager)
+        public AccountController(DataBaseContext _db)
         {
             db = _db;
-            signInManager = _signInManager;
-            userManager = _userManager;
         }
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Index()
         {
-            ViewBag.msg = "Test";
-
             return View();
         }
-        [HttpPost]
-        public IActionResult Index(string a)
-        {
-            ViewBag.msg = "Test";
 
-            return View();
-        }
         [HttpGet]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public IActionResult Register()
         {
             return View();
@@ -44,59 +36,95 @@ namespace BCPLAlumniPortal.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string email, string password)
+        public async Task<IActionResult> Register(RegisterViewModel userData)
         {
 
-            User user = new User { UserName = email, Email = email,EmployeeNumber = "1234", 
-                Name ="Name", DateOfBirth = DateOnly.FromDateTime(DateTime.Today)};
+            User user = new User { 
+                UserName = userData.Email, 
+                Email = userData.Email,
+                EmployeeNumber = userData.EmployeeNumber, 
+                Name = userData.Name,
+                Address = userData.Address,
+                MobileNUmber = userData.MobileNumber,
+                DateOfBirth = DateOnly.FromDateTime(DateTime.Today),
+                AccessFailedCount = 0,
+            };
 
-            var result = await userManager.CreateAsync(user, password);
+            PasswordHasher<User> hasher = new();
+            user.Password = hasher.HashPassword(user, userData.Password);
+            List<UserRole> roles = new List<UserRole>();
+            roles.Add(new() { RoleName = "User" });
+            user.Roles = roles;
 
-            //User userObj = new();
-            //userObj.Email = email;
-            //userObj.Password = password;
+            db.User.Add(user);
+            db.SaveChanges();
 
-
-            ////userObj.Name = "Test User";
-            ////userObj.EmployeeNumber = "1000";
-            ////userObj.Address = "Address";
-
-            ////userObj.MobileNumber = "1234";
-            ////userObj.DateOfBirth = DateOnly.FromDateTime(DateTime.Now);
-
-            ////userObj.UserName = "UserName";
-
-            //db.User.Add(userObj);
-            //db.SaveChanges();
-
-
-            if(result.Succeeded)
-            {
-                TempData["succ_msg"] = "Registered successfully";
-            }
-            
+            TempData["succ_msg"] = "Registered successfully";
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(LoginViewModel data)
         {
-            User user = db.User.Where(x=>x.Email == email).FirstOrDefault();    
+            User user = db.User.Where(x=>x.Email == data.UserName).Include(x=>x.Roles).FirstOrDefault();    
             if(user != null)
             {
-                var result = await signInManager.PasswordSignInAsync(user, password, false, false);
-                if (result.Succeeded)
+                PasswordHasher<User> hasher = new();
+                var result = hasher.VerifyHashedPassword(user, user.Password, data.Password);
+                
+                if (result.Equals(PasswordVerificationResult.Success))
                 {
-                    // Logic for successful login
+                    // create a new claim
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Name, user.Name),
+                        new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                        new Claim("EmployeeNumber", user.EmployeeNumber),
+                    };
+
+                    if(user.Roles != null && user.Roles.Any())
+                    {
+                        foreach (var role in user.Roles)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                        }
+                    }
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        //AllowRefresh = <bool>,
+                        // Refreshing the authentication session should be allowed.
+
+                        //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                        // The time at which the authentication ticket expires. A 
+                        // value set here overrides the ExpireTimeSpan option of 
+                        // CookieAuthenticationOptions set with AddCookie.
+
+                        //IsPersistent = true,
+                        // Whether the authentication session is persisted across 
+                        // multiple requests. When used with cookies, controls
+                        // whether the cookie's lifetime is absolute (matching the
+                        // lifetime of the authentication ticket) or session-based.
+
+                        IssuedUtc = DateTime.Now,
+                        // The time at which the authentication ticket was issued.
+
+                        //RedirectUri = <string>
+                        // The full path or absolute URI to be used as an http 
+                        // redirect response value.
+                    };
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),authProperties);
+
                     return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    TempData["err_msg"] = "Invalid Login";
-                    return RedirectToAction("Index");
-                }
+                TempData["err_msg"] = "Invalid Login";
+                return RedirectToAction("Index");
             }
             else
             {
@@ -107,7 +135,7 @@ namespace BCPLAlumniPortal.Controllers
 
         public async Task<IActionResult> LogOff()
         {
-            await signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index");
         }
     }

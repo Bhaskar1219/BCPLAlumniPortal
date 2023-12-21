@@ -4,6 +4,7 @@ using BCPLAlumniPortal.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BCPLAlumniPortal.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231220060959_identity_removal")]
+    partial class identity_removal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,10 +84,6 @@ namespace BCPLAlumniPortal.Migrations
                     b.Property<DateTime>("claimDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("employeeNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -100,15 +99,11 @@ namespace BCPLAlumniPortal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("userName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserMedicalClaim");
+                    b.ToTable("medicalClaims");
                 });
 
             modelBuilder.Entity("BCPLAlumniPortal.Models.UserRole", b =>
@@ -129,37 +124,6 @@ namespace BCPLAlumniPortal.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRole");
-                });
-
-            modelBuilder.Entity("BCPLAlumniPortal.Models.ViewModels.MedicalClaimViewModel", b =>
-                {
-                    b.Property<string>("id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("claimAmount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("claimDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isEmpanelled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("patientName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("patientRelationship")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("MedicalClaimViewModel");
                 });
 
             modelBuilder.Entity("BCPLAlumniPortal.Models.UserMedicalClaim", b =>

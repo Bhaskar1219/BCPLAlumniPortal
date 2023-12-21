@@ -1,10 +1,12 @@
 using BCPLAlumniPortal.DBContext;
 using BCPLAlumniPortal.Models;
+using BCPLAlumniPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BCPLAlumniPortal.Controllers
 {
@@ -12,34 +14,54 @@ namespace BCPLAlumniPortal.Controllers
     public class HomeController : Controller
     {
         private DataBaseContext db;
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
 
-        public HomeController(DataBaseContext _db, UserManager<User> _userManager, SignInManager<User> _signInManager)
+        public HomeController(DataBaseContext _db)
         {
             db = _db;
-            signInManager = _signInManager;
-            userManager = _userManager;
-        }
-
-
-
-        public void GetUser()
-        {
-            User userObj = db.User.Where(m=>m.EmployeeNumber == "1000").FirstOrDefault();
-
-            userObj.Address = "New Address";
-            db.Entry(userObj).State = EntityState.Modified;
-            db.SaveChanges();
-
-            // select * from User where Employeenumber = '1234'
-
         }
 
         public IActionResult Index()
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult NewClaim()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult NewClaim(MedicalClaimViewModel claimData)
+        {
+            if (ModelState.IsValid)
+            {
+                var empNum = User.FindFirst(x => x.Type == "EmployeeNumber").Value;
+                var userName = User.FindFirst(x => x.Type == ClaimTypes.Name).Value;
+
+                UserMedicalClaim claim = new()
+                {
+                    claimAmount = claimData.claimAmount,
+                    claimDate = DateTime.Now,
+                    gender = claimData.gender,
+                    patientName = claimData.patientName,
+                    isEmpanelled = claimData.isEmpanelled,
+                    patientRelationship = claimData.patientRelationship,
+                    employeeNumber = empNum,
+                    userName = userName
+                };
+                db.UserMedicalClaim.Add(claim);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult ViewClaims()
+        {
+            var empNum = User.FindFirst(x => x.Type == "EmployeeNumber").Value;
+            List<UserMedicalClaim> claims = db.UserMedicalClaim.Where(y=>y.employeeNumber == empNum).ToList();
+            return View(claims);
+        }
+
         [AllowAnonymous]
         public IActionResult Privacy()
         {

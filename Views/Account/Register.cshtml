@@ -1,4 +1,4 @@
-﻿
+﻿@model BCPLAlumniPortal.Models.ViewModels.RegisterViewModel
 @{
     Layout = null;
 }
@@ -13,14 +13,41 @@
 <body>
     <h3>Register</h3>
 
+
+
     <form asp-controller="Account" asp-action="Register" method="post">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <label>Email</label>
-        <input type="text" name="email" />
-        <label>Password</label>
-        <input type="password" name="password" />
+        <div>
+            @Html.TextBoxFor(model => model.Name, "", new { @class = "form-control", placeholder = "Name", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.TextBoxFor(model => model.EmployeeNumber, "", new { @class = "form-control", placeholder = "Employee Number", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.EmployeeNumber, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.TextBoxFor(model => model.Email, "", new { @class = "form-control", placeholder = "Email", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.TextBoxFor(model => model.MobileNumber, "", new { @class = "form-control", placeholder = "Mobile Number", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.TextBoxFor(model => model.DateOfBirth, "", new { @class = "form-control", placeholder = "Date Of Birth", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.TextBoxFor(model => model.Address, "", new { @class = "form-control", placeholder = "Address", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.TextBoxFor(model => model.Password, "", new { @class = "form-control", placeholder = "Password", style = "", required = "required" })
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+
         <input type="submit" value="Submit" />
 
 

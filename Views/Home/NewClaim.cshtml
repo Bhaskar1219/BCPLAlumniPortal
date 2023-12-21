@@ -1,0 +1,36 @@
+﻿@model BCPLAlumniPortal.Models.ViewModels.MedicalClaimViewModel
+@{
+    ViewData["Title"] = "NewClaim";
+}
+
+<h1>NewClaim</h1>
+
+<form asp-controller="Home" asp-action="NewClaim" method="post">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div>
+        @Html.TextBoxFor(model => model.patientName, "", new { @class = "form-control", placeholder = "Patient Name", style = "", required = "required" })
+        @Html.ValidationMessageFor(model => model.patientName, "", new { @class = "text-danger" })
+    </div>
+    <div>
+        @Html.TextBoxFor(model => model.patientRelationship, "", new { @class = "form-control", placeholder = "Patient Relationship", style = "", required = "required" })
+        @Html.ValidationMessageFor(model => model.patientRelationship, "", new { @class = "text-danger" })
+    </div>
+    <div>
+        @Html.TextBoxFor(model => model.gender, "", new { @class = "form-control", placeholder = "Gender", style = "", required = "required" })
+        @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
+    </div>
+    <div>
+        @Html.TextBoxFor(model => model.isEmpanelled, "", new { @class = "form-control", placeholder = "Empanelled", style = "", required = "required" })
+        @Html.ValidationMessageFor(model => model.isEmpanelled, "", new { @class = "text-danger" })
+    </div>
+    <div>
+        @Html.TextBoxFor(model => model.claimAmount, "", new { @class = "form-control", placeholder = "Claim Amount", style = "", required = "required" })
+        @Html.ValidationMessageFor(model => model.claimAmount, "", new { @class = "text-danger" })
+    </div>
+
+    <input type="submit" value="Submit" />
+
+</form>
+
