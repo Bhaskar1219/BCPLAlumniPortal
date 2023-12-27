@@ -1,9 +1,11 @@
 using BCPLAlumniPortal.DBContext;
+using BCPLAlumniPortal.Hubs;
 using BCPLAlumniPortal.Models;
 using BCPLAlumniPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using System.Diagnostics;
@@ -16,15 +18,19 @@ namespace BCPLAlumniPortal.Controllers
     {
         private readonly IConfiguration Configuration;
         private DataBaseContext db;
+        private readonly IHubContext<NotificationHub> hubContext;
 
-        public HomeController(DataBaseContext _db, IConfiguration configuration)
+        public HomeController(DataBaseContext _db, IConfiguration configuration, IHubContext<NotificationHub> _hubContext)
         {
             db = _db;
             Configuration = configuration;
+            hubContext = _hubContext;
         }
 
         public IActionResult Index()
         {
+            int claimCount = db.UserMedicalClaim.Count();
+            hubContext.Clients.All.SendAsync("ReceiveMessage", claimCount.ToString());
             return View();
         }
         [HttpGet]
@@ -94,6 +100,9 @@ namespace BCPLAlumniPortal.Controllers
 
                 db.UserMedicalClaim.Add(claim);
                 db.SaveChanges();
+
+                int claimCount = db.UserMedicalClaim.Count();
+                await hubContext.Clients.All.SendAsync("ClaimNotification", claimCount.ToString());
             }
             return RedirectToAction("Index");
         }
@@ -110,6 +119,12 @@ namespace BCPLAlumniPortal.Controllers
         {
             UserMedicalClaim claim = db.UserMedicalClaim.Where(x => x.id == id).Include(m => m.attachments).FirstOrDefault();
             return View(claim);
+        }
+
+        public async Task<IActionResult> SignalRSendAsync(string message)
+        {
+            await hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+            return RedirectToAction("Index");
         }
 
         [AllowAnonymous]

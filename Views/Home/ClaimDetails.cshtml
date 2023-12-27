@@ -41,7 +41,16 @@
             <div class="hstack gap-3">
                 @foreach (var x in Model.attachments)
                 {
-                    <a href="@Url.Action("ViewAttachment", "Home", new { id = x.id })" target="_blank">Click to View @x.FileName</a>
+                    if (x.FileType.Contains("image/"))
+                    {
+                        <a href="@Url.Action("ViewAttachment", "Home", new { id = x.id })" target="_blank" class="thumbnail">
+                            <img src="@Url.Content(String.Format(x.FilePath+"/{0}", x.FileName))" alt="" width="200" height="200" />
+                        </a>
+                    }
+                    else if (x.FileType == "application / pdf")
+                    {
+                        <a href="@Url.Action("ViewAttachment", "Home", new { id = x.id })" target="_blank">Click to View @x.FileName</a>
+                    }
                 }
             </div>
         </div>

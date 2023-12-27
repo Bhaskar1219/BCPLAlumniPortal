@@ -11,3 +11,28 @@
         <li><a asp-area="" asp-controller="Admin" asp-action="Index">Admin</a></li>
     </ul>
 </div>
+
+<div class="">
+    <div class="row p-1">
+        <div class="col-2">Message</div>
+        <div class="col-5"><input type="text" name="message" id="messageInput" /></div>
+    </div>
+    <div class="row p-1">
+        <button class="btn btn-sm btn-primary" type="submit" id="sendButton" style="width:30%">
+            Send
+        </button>
+    </div>
+</div>
+<div class="row p-1">
+    <div class="col-6">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
+<div>
+    <button type="button" class="btn btn-primary position-relative">
+        Claims
+        <span id="claim_count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+    </button>
+</div>
+
+
