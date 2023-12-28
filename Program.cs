@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using BCPLAlumniPortal.DBContext;
 using BCPLAlumniPortal.Hubs;
 using BCPLAlumniPortal.Models;
@@ -24,6 +25,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
+// Register ReCaptcha
+builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

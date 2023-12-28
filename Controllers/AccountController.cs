@@ -1,4 +1,5 @@
-﻿using BCPLAlumniPortal.DBContext;
+﻿using AspNetCore.ReCaptcha;
+using BCPLAlumniPortal.DBContext;
 using BCPLAlumniPortal.Models;
 using BCPLAlumniPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -66,18 +67,21 @@ namespace BCPLAlumniPortal.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [ValidateReCaptcha]
         public async Task<IActionResult> Login(LoginViewModel data)
         {
-            User user = db.User.Where(x=>x.Email == data.UserName).Include(x=>x.Roles).FirstOrDefault();    
-            if(user != null)
+            if (ModelState.IsValid)
             {
-                PasswordHasher<User> hasher = new();
-                var result = hasher.VerifyHashedPassword(user, user.Password, data.Password);
-                
-                if (result.Equals(PasswordVerificationResult.Success))
+                User user = db.User.Where(x => x.Email == data.UserName).Include(x => x.Roles).FirstOrDefault();
+                if (user != null)
                 {
-                    // create a new claim
-                    var claims = new List<Claim>
+                    PasswordHasher<User> hasher = new();
+                    var result = hasher.VerifyHashedPassword(user, user.Password, data.Password);
+
+                    if (result.Equals(PasswordVerificationResult.Success))
+                    {
+                        // create a new claim
+                        var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim(ClaimTypes.Name, user.Name),
@@ -85,46 +89,52 @@ namespace BCPLAlumniPortal.Controllers
                         new Claim("EmployeeNumber", user.EmployeeNumber),
                     };
 
-                    if(user.Roles != null && user.Roles.Any())
-                    {
-                        foreach (var role in user.Roles)
+                        if (user.Roles != null && user.Roles.Any())
                         {
-                            claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                            foreach (var role in user.Roles)
+                            {
+                                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                            }
                         }
+
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var authProperties = new AuthenticationProperties
+                        {
+                            //AllowRefresh = <bool>,
+                            // Refreshing the authentication session should be allowed.
+
+                            //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                            // The time at which the authentication ticket expires. A 
+                            // value set here overrides the ExpireTimeSpan option of 
+                            // CookieAuthenticationOptions set with AddCookie.
+
+                            //IsPersistent = true,
+                            // Whether the authentication session is persisted across 
+                            // multiple requests. When used with cookies, controls
+                            // whether the cookie's lifetime is absolute (matching the
+                            // lifetime of the authentication ticket) or session-based.
+
+                            IssuedUtc = DateTime.Now,
+                            // The time at which the authentication ticket was issued.
+
+                            //RedirectUri = <string>
+                            // The full path or absolute URI to be used as an http 
+                            // redirect response value.
+                        };
+
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                            new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                        return RedirectToAction("Index", "Home");
                     }
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        //AllowRefresh = <bool>,
-                        // Refreshing the authentication session should be allowed.
-
-                        //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-                        // The time at which the authentication ticket expires. A 
-                        // value set here overrides the ExpireTimeSpan option of 
-                        // CookieAuthenticationOptions set with AddCookie.
-
-                        //IsPersistent = true,
-                        // Whether the authentication session is persisted across 
-                        // multiple requests. When used with cookies, controls
-                        // whether the cookie's lifetime is absolute (matching the
-                        // lifetime of the authentication ticket) or session-based.
-
-                        IssuedUtc = DateTime.Now,
-                        // The time at which the authentication ticket was issued.
-
-                        //RedirectUri = <string>
-                        // The full path or absolute URI to be used as an http 
-                        // redirect response value.
-                    };
-
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),authProperties);
-
-                    return RedirectToAction("Index", "Home");
+                    TempData["err_msg"] = "Invalid Login";
+                    return RedirectToAction("Index");
                 }
-                TempData["err_msg"] = "Invalid Login";
-                return RedirectToAction("Index");
+                else
+                {
+                    TempData["err_msg"] = "Invalid Login";
+                    return RedirectToAction("Index");
+                }
             }
             else
             {
