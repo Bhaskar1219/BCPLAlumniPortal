@@ -15,6 +15,7 @@ namespace BCPLAlumniPortal.Models
         public int AccessFailedCount { get; set; }
         public string? Address { set; get; }
         public DateOnly DateOfBirth { set; get; }
+        public string? PasswordResetCode { get; set; }
         public ICollection<UserRole> Roles { get; set; }
         public ICollection<UserMedicalClaim> medicalClaims { get; set; }
         
