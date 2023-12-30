@@ -5,30 +5,7 @@
 
 <h2>Claim Details</h2>
 
-<div cite="row mt-5 mb-5">
-    <div class="row align-items-start">
-        <div class="col-2 bg-light p-2 border align-self-stretch">
-            Claim Number
-        </div>
-        <div class="col-2 border p-2 align-self-stretch">
-            @Html.DisplayFor(model => model.id)
-        </div>
-        <div class="col-2 bg-light p-2 border align-self-stretch">
-            Patient Name
-        </div>
-        <div class="col-2 border p-2 align-self-stretch">
-            @Html.DisplayFor(model => model.patientName)
-        </div>
-    </div>
-    <div class="row align-items-start">
-        <div class="col-2 bg-light p-2 border align-self-stretch">
-            Claim Amount
-        </div>
-        <div class="col-2 border p-2 align-self-stretch">
-            @Html.DisplayFor(model => model.claimAmount)
-        </div>
-    </div>
-</div>
+
 <div class="row">
     @if (Model.attachments.Any())
     {

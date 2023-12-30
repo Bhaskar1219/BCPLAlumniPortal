@@ -6,11 +6,10 @@
         public string employeeNumber { set;get; }
         public string userName { set;get; }
         public DateTime claimDate { set;get; }
-        public string patientName { set;get; }
-        public string patientRelationship { set; get; }
-        public string gender { set; get; }
-        public bool isEmpanelled { set;get; }
-        public int claimAmount { set;get; }
+        public float totalAmountClaimed { set; get; }
+        public float totalAmountApproved { set; get; }
+        public bool isSubmitted { set; get; }
         public ICollection<UserMedicalClaimAttachment> attachments { set; get; }
+        public ICollection<MedicalClaimCharges> charges { set; get; }
     }
 }

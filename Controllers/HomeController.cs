@@ -36,10 +36,14 @@ namespace BCPLAlumniPortal.Controllers
         [HttpGet]
         public IActionResult NewClaim()
         {
-            return View();
+            MedicalClaimViewModel data = new();
+            List<MedicalClaimChargeViewModel> charges = new();
+            charges.Add(new MedicalClaimChargeViewModel());
+            data.charges = charges;
+            return View(data);
         }
         [HttpPost]
-        public async Task<IActionResult> NewClaim(MedicalClaimViewModel claimData)
+        public async Task<IActionResult> NewClaim(MedicalClaimViewModel claimData, string form_btn)
         {
             if (ModelState.IsValid)
             {
@@ -48,55 +52,78 @@ namespace BCPLAlumniPortal.Controllers
 
                 UserMedicalClaim claim = new()
                 {
-                    claimAmount = claimData.claimAmount,
                     claimDate = DateTime.Now,
-                    gender = claimData.gender,
-                    patientName = claimData.patientName,
-                    isEmpanelled = claimData.isEmpanelled,
-                    patientRelationship = claimData.patientRelationship,
                     employeeNumber = empNum,
                     userName = userName
                 };
 
-                if(claimData.File != null && claimData.File.Any())
+                List<MedicalClaimCharges> charges = new();
+
+                foreach(var charge in claimData.charges)
                 {
-                    // get file upload path from appsettings.json
-                    string fileRootPath = Configuration.GetSection("AppSettings")["UploadFileRootPath"];  // Get Upload Files Root Path from appsettings.json
-                    // create folder path specific for current application function
-                    string[] paths = { fileRootPath, "MedicalClaimAttachment"}; 
-                    string fileSaveDir = Path.Combine(paths); // combine paths
-                    Directory.CreateDirectory(fileSaveDir); // create folder
-
-                    List<UserMedicalClaimAttachment> attachments = new ();
-                    foreach (var file in claimData.File)
+                    MedicalClaimCharges newCharge = new()
                     {
-                        if (file.ContentType.Contains(("image/")) || file.ContentType == "application/pdf")
+                        amountClaimed = charge.amountClaimed,
+                        chargeType = charge.chargeType,
+                        endDate = charge.endDate,
+                        isEmpanelled = charge.isEmpanelled,
+                        isRecommended = charge.isRecommended,
+                        particulars = charge.particulars,
+                        patientName = charge.patientName,
+                        patientRelationship = charge.patientRelationship,
+                        placeOfTreatment = charge.placeOfTreatment,
+                        serviceProviderName = charge.serviceProviderName,
+                        serviceRefNo = charge.serviceRefNo,
+                        startDate = charge.startDate,
+                        treatmentType = charge.treatmentType
+                    };
+                    charges.Add(newCharge);
+
+                    if(charge.UploadFile != null && charge.UploadFile.Any())
+                    {
+                        // get file upload path from appsettings.json
+                        string fileRootPath = Configuration.GetSection("AppSettings")["UploadFileRootPath"];  // Get Upload Files Root Path from appsettings.json
+                                                                                                              // create folder path specific for current application function
+                        string[] paths = { fileRootPath, "MedicalClaimAttachment" };
+                        string fileSaveDir = Path.Combine(paths); // combine paths
+                        Directory.CreateDirectory(fileSaveDir); // create folder
+
+                        List<UserMedicalClaimAttachment> attachments = new();
+                        foreach (var file in charge.UploadFile)
                         {
-                            if(file.Length <= 5144576)
+                            if (file.ContentType.Contains(("image/")) || file.ContentType == "application/pdf")
                             {
-                                // create filename with file extension
-                                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                                // prepare final file path
-                                string fileSavePath = Path.Combine(fileSaveDir, fileName);
-
-                                var attachment = new UserMedicalClaimAttachment
+                                if (file.Length <= 5144576)
                                 {
-                                    FileName = fileName,
-                                    FileType = file.ContentType,
-                                    FilePath = fileSavePath,
-                                    FileSize = file.Length
-                                };
-                                attachments.Add(attachment);
+                                    // create filename with file extension
+                                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                                    // prepare final file path
+                                    string fileSavePath = Path.Combine(fileSaveDir, fileName);
 
-                                // save file to directory from file stream
-                                using var stream = System.IO.File.Create(fileSavePath);
-                                await file.CopyToAsync(stream);
+                                    var attachment = new UserMedicalClaimAttachment
+                                    {
+                                        FileName = fileName,
+                                        FileType = file.ContentType,
+                                        FilePath = fileSavePath,
+                                        FileSize = file.Length
+                                    };
+                                    attachments.Add(attachment);
+
+                                    // save file to directory from file stream
+                                    using var stream = System.IO.File.Create(fileSavePath);
+                                    await file.CopyToAsync(stream);
+                                }
                             }
                         }
-                    }
 
-                    claim.attachments = attachments;
+                        claim.attachments = attachments;
+                    }
                 }
+
+                claim.charges = charges;
+
+                float totalAmount = charges.Sum(m => m.amountClaimed);
+                claim.totalAmountClaimed = totalAmount;
 
                 db.UserMedicalClaim.Add(claim);
                 db.SaveChanges();

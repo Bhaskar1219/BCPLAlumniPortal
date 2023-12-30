@@ -8,63 +8,120 @@
     <form asp-controller="Home" asp-action="NewClaim" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="table-responsive">
+            <table class="table table-bordered" style="overflow-x:scroll;">
+                <tr>
+                    <th>
+                        Patient Name
+                    </th>
+                    <th>
+                        Relationship
+                    </th>
+                    <th>
+                        Place of Treatment
+                    </th>
+                    <th>
+                        Charge Type
+                    </th>
+                    <th>
+                        Emapnelled
+                    </th>
+                    <th>
+                        Treatment Type
+                    </th>
+                    <th>
+                        Particulars
+                    </th>
+                    <th>
+                        Doctor/Hospital/Laboratory Name
+                    </th>
+                    <th>
+                        Start Date
+                    </th>
+                    <th>
+                        End Date
+                    </th>
+                    <th>
+                        Bill Ref No
+                    </th>
+                    <th>
+                        Recommended
+                    </th>
+                    <th>
+                        Amount Claimed
+                    </th>
+                    <th>
+                        Attachment
+                    </th>
+                    <th>
+                        Delete
+                    </th>
+                </tr>
 
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-2 pt-0">Patient Name</legend>
-            <div class="col-4">
-                @Html.TextBoxFor(model => model.patientName, "", new { @class = "form-control", placeholder = "Patient Name", style = "", required = "required" })
-                @Html.ValidationMessageFor(model => model.patientName, "", new { @class = "text-danger" })
-            </div>
-        </fieldset>
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-2 pt-0">Relationship with Employee</legend>
-            <div class="col-4">
-                @Html.TextBoxFor(model => model.patientRelationship, "", new { @class = "form-control", placeholder = "Relationship with Employee", style = "", required = "required" })
-                @Html.ValidationMessageFor(model => model.patientRelationship, "", new { @class = "text-danger" })
-            </div>
-        </fieldset>
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-2 pt-0">Gender</legend>
-            <div class="col-4">
-                @Html.TextBoxFor(model => model.gender, "", new { @class = "form-control", placeholder = "Gender", style = "", required = "required" })
-                @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
-            </div>
-        </fieldset>
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-2 pt-0">Empanelled Institute</legend>
-            <div class="col-4">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="isEmpanelled" id="isEmpanelled1" value="true" required>
-                    <label class="form-check-label" for="isEmpanelled1">Emapnelled</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="isEmpanelled" id="isEmpanelled2" value="false">
-                    <label class="form-check-label" for="isEmpanelled2">Non-Emapnelled</label>
-                </div>
-            </div>
-        </fieldset>
-        <fieldset class="row mb-3">
-            <legend class="col-form-label col-2 pt-0">Claim Amount</legend>
-            <div class="col-4">
-                @Html.TextBoxFor(model => model.claimAmount, "", new { @class = "form-control", placeholder = "Claim Amount", style = "", required = "required" })
-                @Html.ValidationMessageFor(model => model.claimAmount, "", new { @class = "text-danger" })
-            </div>
-        </fieldset>
 
-        <div class="row mb-3 g-3 align-items-center">
-            <label class="col-form-label col-md-2 pt-0">Attachment (if any)</label>
-            <div class="col-4">
-                <input class="form-control" type="file" id="uploadedFile" name="File" multiple aria-describedby="fileUploadType" />
-            </div>
-            <div class="col-auto">
-                <span id="fileUploadType" class="form-text">
-                    Only image or PDF allowed. Multiple files with maximum total size 50 MB
-                </span>
-            </div>
+                @foreach (var charge in Model.charges)
+                {
+                    @Html.HiddenFor(model=>charge.id)
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => charge.patientName, "", new { @class = "form-control", placeholder = "Patient Name", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.patientRelationship, "", new { @class = "form-control", placeholder = "Relationship", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.placeOfTreatment, "", new { @class = "form-control", placeholder = "Place of Treatment", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.chargeType, "", new { @class = "form-control", placeholder = "Charge Type", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.isEmpanelled, "", new { @class = "form-control", placeholder = "Emnpanelled", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.treatmentType, "", new { @class = "form-control", placeholder = "Treatement Type", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.particulars, "", new { @class = "form-control", placeholder = "Particulars", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.serviceProviderName, "", new { @class = "form-control", placeholder = "Name", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.startDate, "", new { @class = "form-control", placeholder = "Start Date", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.endDate, "", new { @class = "form-control", placeholder = "End Date", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.serviceRefNo, "", new { @class = "form-control", placeholder = "Bill No", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.amountClaimed, "", new { @class = "form-control", placeholder = "Recommended", style = "" })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => charge.amountClaimed, "", new { @class = "form-control", placeholder = "Amount Claimed", style = "" })
+                        </td>
+                        <td>
+                            <input class="form-control" type="file" id="Fi" name="UploadFile" multiple aria-describedby="fileUploadType" />
+                        </td>
+                        <td>
+                            <a asp-area="" asp-controller="Home" asp-action="ForgotPassword" >Forgot Password</a>
+                        </td>
+                    </tr>
+                }
+            </table>
         </div>
+
         <fieldset class="row mb-3">
             <div class="offset-2">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" name="form_btn" value="new_row" class="btn btn-primary">New Row</button>
+            </div>
+            <div class="">
+                <button type="submit" name="form_btn" value="draft" class="btn btn-primary">Save Draft</button>
+            </div>
+            <div class="">
+                <button type="submit" name="form_btn" value="submit" class="btn btn-primary">Submit</button>
             </div>
         </fieldset>
 
