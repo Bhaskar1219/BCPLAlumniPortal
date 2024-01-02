@@ -4,6 +4,7 @@ using BCPLAlumniPortal.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BCPLAlumniPortal.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240101051341_claimattacupdate")]
+    partial class claimattacupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,49 +34,60 @@ namespace BCPLAlumniPortal.Migrations
                     b.Property<Guid?>("UserMedicalClaimid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float?>("amountApproved")
-                        .HasColumnType("real");
+                    b.Property<string>("amountApproved")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("amountClaimed")
+                    b.Property<float>("amountClaimed")
                         .HasColumnType("real");
 
                     b.Property<string>("chargeType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("endDate")
+                    b.Property<DateOnly>("endDate")
                         .HasColumnType("date");
 
                     b.Property<string>("gender")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("isEmpanelled")
                         .HasColumnType("bit");
 
                     b.Property<string>("isRecommended")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("particulars")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("patientName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("patientRelationship")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("placeOfTreatment")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("serviceProviderName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("serviceRefNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("startDate")
+                    b.Property<DateOnly>("startDate")
                         .HasColumnType("date");
 
                     b.Property<string>("treatmentType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
@@ -149,10 +163,10 @@ namespace BCPLAlumniPortal.Migrations
                     b.Property<bool>("isSubmitted")
                         .HasColumnType("bit");
 
-                    b.Property<float?>("totalAmountApproved")
+                    b.Property<float>("totalAmountApproved")
                         .HasColumnType("real");
 
-                    b.Property<float?>("totalAmountClaimed")
+                    b.Property<float>("totalAmountClaimed")
                         .HasColumnType("real");
 
                     b.Property<string>("userName")

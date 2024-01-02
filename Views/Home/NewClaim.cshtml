@@ -8,6 +8,9 @@
     <form asp-controller="Home" asp-action="NewClaim" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.id)
+
         <div class="table-responsive">
             <table class="table table-bordered" style="overflow-x:scroll;">
                 <tr>
@@ -59,54 +62,55 @@
                 </tr>
 
 
-                @foreach (var charge in Model.charges)
+                @for (int i = 0; i < Model.charges.Count; i++)
                 {
-                    @Html.HiddenFor(model=>charge.id)
+                    @Html.HiddenFor(model => model.charges[i].id)
                     <tr>
                         <td>
-                            @Html.TextBoxFor(model => charge.patientName, "", new { @class = "form-control", placeholder = "Patient Name", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].patientName, "", new { @class = "form-control", placeholder = "Patient Name", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.patientRelationship, "", new { @class = "form-control", placeholder = "Relationship", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].patientRelationship, "", new { @class = "form-control", placeholder = "Relationship", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.placeOfTreatment, "", new { @class = "form-control", placeholder = "Place of Treatment", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].placeOfTreatment, "", new { @class = "form-control", placeholder = "Place of Treatment", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.chargeType, "", new { @class = "form-control", placeholder = "Charge Type", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].chargeType, "", new { @class = "form-control", placeholder = "Charge Type", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.isEmpanelled, "", new { @class = "form-control", placeholder = "Emnpanelled", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].isEmpanelled, "", new { @class = "form-control", placeholder = "Emnpanelled", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.treatmentType, "", new { @class = "form-control", placeholder = "Treatement Type", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].treatmentType, "", new { @class = "form-control", placeholder = "Treatement Type", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.particulars, "", new { @class = "form-control", placeholder = "Particulars", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].particulars, "", new { @class = "form-control", placeholder = "Particulars", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.serviceProviderName, "", new { @class = "form-control", placeholder = "Name", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].serviceProviderName, "", new { @class = "form-control", placeholder = "Name", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.startDate, "", new { @class = "form-control", placeholder = "Start Date", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].startDate, "", new { @class = "form-control", placeholder = "Start Date", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.endDate, "", new { @class = "form-control", placeholder = "End Date", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].endDate, "", new { @class = "form-control", placeholder = "End Date", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.serviceRefNo, "", new { @class = "form-control", placeholder = "Bill No", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].serviceRefNo, "", new { @class = "form-control", placeholder = "Bill No", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.amountClaimed, "", new { @class = "form-control", placeholder = "Recommended", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].isRecommended, "", new { @class = "form-control", placeholder = "Recommended", style = "" })
                         </td>
                         <td>
-                            @Html.TextBoxFor(model => charge.amountClaimed, "", new { @class = "form-control", placeholder = "Amount Claimed", style = "" })
+                            @Html.TextBoxFor(model => model.charges[i].amountClaimed, "", new { @class = "form-control", placeholder = "Amount Claimed", style = "" })
                         </td>
                         <td>
-                            <input class="form-control" type="file" id="Fi" name="UploadFile" multiple aria-describedby="fileUploadType" />
+                            @Html.TextBoxFor(model => model.charges[i].UploadFile, "", new { @type = "file", @class = "form-control", style = "" })
+                            @* <input class="form-control" type="file" id="Fi" name="model.charges[i].UploadFile" multiple aria-describedby="fileUploadType" /> *@
                         </td>
                         <td>
-                            <a asp-area="" asp-controller="Home" asp-action="ForgotPassword" >Forgot Password</a>
+                            <a asp-area="" asp-controller="Home" asp-action="DeleteClaimEntry" >X</a>
                         </td>
                     </tr>
                 }
